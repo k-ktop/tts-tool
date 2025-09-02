@@ -1,0 +1,169 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Text‑to‑Speech | Fast Hindi/English Voice</title>
+  <meta name="description" content="Free browser-based text to speech tool. Works for Hindi and English. No signup required." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <!-- Header -->
+  <header class="sticky top-0 z-30 backdrop-blur bg-white/70 border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-2xl bg-slate-900 text-white grid place-items-center font-bold">TTS</div>
+        <h1 class="text-lg sm:text-xl font-semibold">Text‑to‑Speech (Hindi/English)</h1>
+      </div>
+      <a href="#how" class="text-sm text-slate-600 hover:text-slate-900">How it works</a>
+    </div>
+  </header>  <!-- Ad placeholder (replace with your AdSense code after approval) -->  <div class="max-w-5xl mx-auto px-4 mt-4">
+    <div class="w-full rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-center text-slate-500">
+      <!-- AdSense: paste your ad code below after your site is approved -->
+      <!-- Example: <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXX" crossorigin="anonymous"></script> -->
+      <p>Ad space • Replace with your AdSense snippet</p>
+    </div>
+  </div>  <!-- Main -->  <main class="max-w-5xl mx-auto px-4 py-6 grid gap-6">
+    <section class="grid gap-4">
+      <div class="grid gap-2">
+        <label for="text" class="font-medium">Enter text (Hindi/English)</label>
+        <textarea id="text" class="w-full h-44 p-4 rounded-2xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-slate-400" placeholder="Yahan apna text likhiye... / Type your text here..."></textarea>
+      </div><div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    <div class="grid gap-1">
+      <label for="voice" class="text-sm text-slate-600">Voice</label>
+      <select id="voice" class="rounded-xl border border-slate-300 bg-white p-2"></select>
+    </div>
+    <div class="grid gap-1">
+      <label for="rate" class="text-sm text-slate-600">Speed: <span id="rateVal">1.0</span>x</label>
+      <input id="rate" type="range" min="0.5" max="1.5" step="0.1" value="1" class="w-full" />
+    </div>
+    <div class="grid gap-1">
+      <label for="pitch" class="text-sm text-slate-600">Pitch: <span id="pitchVal">1.0</span></label>
+      <input id="pitch" type="range" min="0.5" max="2" step="0.1" value="1" class="w-full" />
+    </div>
+    <div class="grid gap-1">
+      <label for="lang" class="text-sm text-slate-600">Quick language</label>
+      <div class="flex gap-2">
+        <button id="hiBtn" class="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50">Hindi</button>
+        <button id="enBtn" class="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 hover:bg-slate-50">English</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-3">
+    <button id="speak" class="rounded-2xl px-5 py-3 bg-slate-900 text-white hover:bg-black active:scale-[.99]">Speak</button>
+    <button id="pause" class="rounded-2xl px-5 py-3 border border-slate-300 bg-white hover:bg-slate-50">Pause</button>
+    <button id="resume" class="rounded-2xl px-5 py-3 border border-slate-300 bg-white hover:bg-slate-50">Resume</button>
+    <button id="stop" class="rounded-2xl px-5 py-3 border border-slate-300 bg-white hover:bg-slate-50">Stop</button>
+    <button id="sample" class="rounded-2xl px-5 py-3 border border-slate-300 bg-white hover:bg-slate-50">Insert sample</button>
+  </div>
+
+  <div id="status" class="text-sm text-slate-600"></div>
+
+  <div class="rounded-2xl border border-slate-200 bg-white p-4" id="how">
+    <h2 class="font-semibold text-lg mb-2">How it works</h2>
+    <ul class="list-disc pl-5 space-y-1 text-slate-700">
+      <li>Runs fully in your browser using Web Speech API—no server or API key needed.</li>
+      <li>Choose a voice (Hindi voices often show as “hi-IN” or “India” in the list).</li>
+      <li>Works on most Chromium-based browsers and Android; iOS support may vary.</li>
+      <li>Add AdSense code in the ad box after your site is approved to start earning.</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="py-6 text-center text-slate-500">
+  <p>© <span id="year"></span> TTS Tool. Made for learning & demo use.</p>
+</footer>
+
+  </main>  <script>
+    const txt = document.getElementById('text');
+    const speakBtn = document.getElementById('speak');
+    const pauseBtn = document.getElementById('pause');
+    const resumeBtn = document.getElementById('resume');
+    const stopBtn = document.getElementById('stop');
+    const voiceSel = document.getElementById('voice');
+    const rate = document.getElementById('rate');
+    const pitch = document.getElementById('pitch');
+    const rateVal = document.getElementById('rateVal');
+    const pitchVal = document.getElementById('pitchVal');
+    const hiBtn = document.getElementById('hiBtn');
+    const enBtn = document.getElementById('enBtn');
+    const statusEl = document.getElementById('status');
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Update labels
+    rate.addEventListener('input', () => rateVal.textContent = rate.value);
+    pitch.addEventListener('input', () => pitchVal.textContent = pitch.value);
+
+    // Load voices
+    let voices = [];
+    function loadVoices() {
+      voices = speechSynthesis.getVoices().sort((a,b)=> a.lang.localeCompare(b.lang));
+      voiceSel.innerHTML = '';
+      voices.forEach((v, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${v.name} — ${v.lang}`;
+        voiceSel.appendChild(opt);
+      });
+      // Try default Hindi or English selection
+      const hiIndex = voices.findIndex(v => v.lang.toLowerCase().startsWith('hi'));
+      const enIndex = voices.findIndex(v => v.lang.toLowerCase().startsWith('en'));
+      voiceSel.selectedIndex = hiIndex >= 0 ? hiIndex : (enIndex >= 0 ? enIndex : 0);
+    }
+    loadVoices();
+    if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    // Quick language buttons
+    hiBtn.addEventListener('click', () => {
+      const hiIndex = voices.findIndex(v => v.lang.toLowerCase().startsWith('hi'));
+      if (hiIndex >= 0) voiceSel.selectedIndex = hiIndex;
+    });
+    enBtn.addEventListener('click', () => {
+      const enIndex = voices.findIndex(v => v.lang.toLowerCase().startsWith('en'));
+      if (enIndex >= 0) voiceSel.selectedIndex = enIndex;
+    });
+
+    function speak(text) {
+      if (!text.trim()) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      const v = voices[voiceSel.value] || voices[0];
+      if (v) u.voice = v;
+      u.rate = parseFloat(rate.value);
+      u.pitch = parseFloat(pitch.value);
+      u.onstart = () => statusEl.textContent = 'Speaking...';
+      u.onend = () => statusEl.textContent = 'Done.';
+      u.onerror = (e) => statusEl.textContent = 'Error: ' + (e.error || 'unknown');
+      window.speechSynthesis.speak(u);
+    }
+
+    speakBtn.addEventListener('click', () => speak(txt.value));
+    pauseBtn.addEventListener('click', () => speechSynthesis.pause());
+    resumeBtn.addEventListener('click', () => speechSynthesis.resume());
+    stopBtn.addEventListener('click', () => speechSynthesis.cancel());
+
+    // Sample text
+    document.getElementById('sample').addEventListener('click', () => {
+      txt.value = 'Namaste! Yeh ek free text‑to‑speech tool hai jo Hindi aur English dono mein kaam karta hai. Aap isse YouTube shorts, reels ya padhai mein use kar sakte hain.';
+    });
+
+    // PWA basics (optional offline)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(()=>{});
+      });
+    }
+  </script></body>
+</html>
